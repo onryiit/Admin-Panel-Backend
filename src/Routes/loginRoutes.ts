@@ -8,6 +8,7 @@ dotenv.config();
 const router = express.Router();
 const jwtSecret = process.env.JWT_SECRET;
 
+// This API is login for user
 router.post("/login", async (req:any, res:any) => {
   console.log(req.body)
     let email= req.body.email;
