@@ -37,6 +37,8 @@ import noteRoutes from './Routes/noteRoutes';
 import loginRoutes from './Routes/loginRoutes';
 import registerRoutes from './Routes/registerRoutes';
 import dotenv from 'dotenv';
+import customerRoutes from './Routes/customerRoutes';
+import userRoutes from './Routes/userRoutest';
 
 dotenv.config();
 const app = express();
@@ -89,8 +91,10 @@ app.use(bodyParser.json());
 app.use('/Note', noteRoutes);
 app.use('/auth', loginRoutes);
 app.use('/reg', registerRoutes);
+app.use('/customer', customerRoutes);
+app.use('/user', userRoutes);
 
-app.get('/', (req, res) => { // Basit bir kök route (isteğe bağlı, sağlık kontrolü için)
+app.get('/', (req, res) => {
   res.send('API Çalışıyor!');
 });
 

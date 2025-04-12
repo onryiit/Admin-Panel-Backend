@@ -7,42 +7,68 @@ const NoteRouter = Router();
 
 // This API get all notes
 NoteRouter.get('/note-list',authMiddleware, async (req: Request, res: Response) => {
-    const notes = await Note.find().sort({ createdAt: -1 });
+    const customerId = req.query.customer_id
+    const pk = `Notes_${customerId}`;
+    const notes = await Note.find({pk:pk}).sort({ createdAt: -1 });
     res.json(notes);
 });
 
 
 NoteRouter.post('/save-note',authMiddleware ,async (req: Request, res: Response) => {
-    const { title, content } = req.body;
+    const { title, content, customer_id } = req.body;
     const id = new Date().getTime()
     const createdDate = new Date().getTime()
-    const note = new Note({ id,title, content,createdDate });
+    const pk = `Notes_${customer_id}`
+    const note = new Note({
+        pk,
+        id,
+        title,
+        content,
+        createdDate
+    });
     await note.save();
     res.status(200).json(note);
 });
 
-NoteRouter.get('/note/:id',authMiddleware , async (req: any, res: any) => {
+NoteRouter.get('/notes', authMiddleware, async (req: any, res: any) => {
     try {
-      const note = await Note.findOne({ id: req.params.id });  
-      if (!note) {
-        return res.status(404).json({ message: 'Not bulunamadı' });
-      }
-      res.json(note);
-    } catch (err) {
-      res.status(500).json({ message: 'Sunucu hatası', error: err });
+        const customerId = req.query.customer_id
+        const id = req.query.id
+
+        if (!customerId) {
+            return res.status(400).json({ message: 'customerId query parametresi eksik.' });
+        }
+
+        const pk = `Notes_${customerId}`;
+
+        const notes = await Note.findOne({ pk: pk, id: id });
+
+        res.status(200).json(notes);
+    } catch (error) {
+        console.error("Notlar getirilirken hata:", error);
+        res.status(500).json({ message: "Notlar getirilirken sunucu hatası oluştu." });
     }
-  });
+});
 
-  NoteRouter.put('/note/:id',authMiddleware , async (req: any, res: any) => {
+  NoteRouter.put('/note',authMiddleware , async (req: any, res: any) => {
     const { title, content } = req.body;
-    const createdDate = moment().unix() * 1000
-    const { id } = req.params;  
-
+    const  id = req.query.id;
+    const  customer_id  = req.query.customer_id;
+    const pk = `Notes_${customer_id}` 
+    const createdDate = String(moment().unix() * 1000) 
+    let updatePayload: { title?: string, content?: string, createdDate?: string }={
+        title:title,
+        content:content,
+        createdDate:createdDate
+    }
     try {
         const updatedNote = await Note.findOneAndUpdate(
-            { id: parseInt(id) }, 
-            { title, content ,createdDate},
-            { new: true } 
+            { pk: pk, id: id },   
+            { $set: updatePayload },    
+            {
+                new: true,            // Güncellenmiş dokümanı döndür
+                runValidators: true   // Şema validasyonlarını çalıştır
+            }
         );
 
         if (!updatedNote) {
@@ -56,11 +82,14 @@ NoteRouter.get('/note/:id',authMiddleware , async (req: any, res: any) => {
     }
 });
 
-NoteRouter.delete('/note/:id',authMiddleware , async (req: any, res: any) => {
-    const { id } = req.params;
+NoteRouter.delete('/note',authMiddleware , async (req: any, res: any) => {
+    // const { id } = req.params;
+    const  id = req.query.id;
+    const  customer_id  = req.query.customer_id;
+    const pk = `Notes_${customer_id}` 
 
     try {
-        const deletedNote = await Note.findOneAndDelete({ id: parseInt(id) });
+        const deletedNote = await Note.findOneAndDelete({ pk:pk, id: parseInt(id) });
 
         if (!deletedNote) {
             return res.status(404).json({ message: 'Not bulunamadı' });

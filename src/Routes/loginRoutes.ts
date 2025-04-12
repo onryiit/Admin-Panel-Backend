@@ -10,7 +10,6 @@ const jwtSecret = process.env.JWT_SECRET;
 
 // This API is login for user
 router.post("/login", async (req:any, res:any) => {
-  console.log(req.body)
     let email= req.body.email;
     let password= req.body.password;
   
@@ -25,7 +24,7 @@ router.post("/login", async (req:any, res:any) => {
     
       const token = jwt.sign({ userId: user._id }, jwtSecret, { expiresIn: "1h" });
     
-      res.json({ token });
+      res.json({ token:token,user_id:user.user_id,customer_id:user.customer_id });
     } catch (err) {
       console.error('Giriş hatası:', err);
       res.status(500).json({ message: "Sunucu hatası." });
