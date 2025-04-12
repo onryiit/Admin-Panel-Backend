@@ -5,6 +5,7 @@ import moment from 'moment';
 
 const NoteRouter = Router();
 
+// This API get all notes
 NoteRouter.get('/note-list',authMiddleware, async (req: Request, res: Response) => {
     const notes = await Note.find().sort({ createdAt: -1 });
     res.json(notes);
