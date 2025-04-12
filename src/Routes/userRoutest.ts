@@ -10,9 +10,6 @@ userRoutes.get('/', async (req, res) => {
         const customer_id = req.query.customer_id
         const pk= `Users_${customer_id}`
         const user_id = Number(req.query.user_id)
-        console.log(pk)
-        console.log(customer_id)
-        console.log(user_id)
         const customers = await User.findOne({pk:pk,user_id:user_id}); 
         res.status(200).json(customers);
     } catch (error) {
