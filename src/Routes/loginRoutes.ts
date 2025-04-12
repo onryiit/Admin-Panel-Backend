@@ -15,14 +15,16 @@ router.post("/login", async (req:any, res:any) => {
   
     try {
       const user = await User.findOne({ email });
-      // console.log('Kullanıcı:', user);
+      console.log('Kullanıcı:', user);
     
       if (!user) return res.status(400).json({ message: "Kullanıcı bulunamadı." });
     
       const isMatch = await bcrypt.compare(password, user.password);
+      console.log(isMatch)
       if (!isMatch) return res.status(400).json({ message: "Şifre yanlış." });
     
       const token = jwt.sign({ userId: user._id }, jwtSecret, { expiresIn: "1h" });
+      console.log(token)
     
       res.json({ token:token,user_id:user.user_id,customer_id:user.customer_id });
     } catch (err) {
