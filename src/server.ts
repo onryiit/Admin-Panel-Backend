@@ -28,7 +28,7 @@
 //   console.log(`Backend ${PORT} portunda çalışıyor.`);
 // });
 
-// cloud
+// use for cloud
 import express from 'express';
 import cors from 'cors'; // CORS middleware'i import ediliyor
 import bodyParser from 'body-parser';
