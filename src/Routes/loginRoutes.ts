@@ -24,7 +24,7 @@ router.post("/login", async (req:any, res:any) => {
       if (!isMatch) return res.status(400).json({ message: "Şifre yanlış." });
     
       const token = jwt.sign({ userId: user._id }, jwtSecret, { expiresIn: "1h" });
-      // console.log(token)
+      console.log(token)
     
       res.json({ token:token,user_id:user.user_id,customer_id:user.customer_id });
     } catch (err) {
